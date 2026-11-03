@@ -1,48 +1,57 @@
-# Instalación de MongoDB en Ubuntu Server (desde PuTTY)
+# Instalación de MongoDB con Docker en Ubuntu (desde PuTTY)
 
-Copia y pega **una línea a la vez** en PuTTY (clic derecho pega). La contraseña que pide `sudo` es la de tu usuario.
+MongoDB no publica paquetes `apt` para Ubuntu 26.04 (*resolute*), por eso se ejecuta en un contenedor Docker con la imagen oficial `mongo:8.0`, que ya incluye `mongosh`. Este método funciona igual en cualquier versión de Ubuntu.
 
-## 1. Verificar la versión de Ubuntu
+Copia y pega **una línea a la vez** en PuTTY (clic derecho pega).
+
+## 1. Esperar a que termine la actualización automática de Ubuntu
 
 ```bash
-lsb_release -cs
+while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do echo "Esperando a unattended-upgrades..."; sleep 10; done
 ```
 
-Debe responder `jammy` (22.04) o `noble` (24.04). MongoDB 8.0 soporta ambas.
-
-## 2. Instalar MongoDB 8.0
+## 2. Instalar Docker y Git
 
 ```bash
-sudo rm -f /etc/apt/sources.list.d/mongodb-org-7.0.list
-sudo apt-get install -y gnupg curl git
-curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg --yes -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+sudo rm -f /etc/apt/sources.list.d/mongodb-org-*.list
 sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo systemctl daemon-reload
-sudo systemctl start mongod
-sudo systemctl enable mongod
-sudo systemctl status mongod --no-pager
-mongosh --quiet --eval "db.version()"
+sudo apt-get install -y docker.io git
+sudo systemctl enable --now docker
 ```
 
-`status` debe mostrar `active (running)` y el último comando la versión (8.0.x).
-
-## 3. Ejecutar los scripts
+## 3. Descargar el repositorio y levantar MongoDB
 
 ```bash
 cd ~
 git clone https://github.com/JesusAMPY/UNAD_BigData_Tarea4_Jesus_Acevedo.git
-cd UNAD_BigData_Tarea4_Jesus_Acevedo
-mongosh --quiet scripts/01_crear_bd_e_insertar.js
-mongosh --quiet scripts/02_consultas_crud.js
-mongosh --quiet scripts/03_filtros_operadores_join.js
-mongosh --quiet scripts/04_agregaciones.js
+sudo docker run -d --name mongodb -p 27017:27017 -v ~/UNAD_BigData_Tarea4_Jesus_Acevedo:/tarea4 mongo:8.0
+sudo docker ps
+sudo docker exec mongodb mongosh --quiet --eval "db.version()"
+```
+
+`docker ps` debe mostrar el contenedor `mongodb` con estado `Up` y el último comando la versión (8.0.x).
+
+## 4. Ejecutar los scripts
+
+```bash
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/01_crear_bd_e_insertar.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/02_consultas_crud.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/03_filtros_operadores_join.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/04_agregaciones.js
 ```
 
 El script 02 modifica los datos, así que para repetirlo hay que correr antes el 01.
 
+Para abrir la consola interactiva de MongoDB: `sudo docker exec -it mongodb mongosh calidad_aire_aburra`
+
 ## Problemas comunes
 
-- **`Unit mongod.service not found`**: el paquete no se instaló. Revisar el mensaje de `sudo apt-get install -y mongodb-org`; casi siempre es porque la línea del repositorio no corresponde a la versión de Ubuntu (por eso se usa `$(lsb_release -cs)`).
-- **`Illegal instruction` o `status=4/ILL`**: MongoDB 5.0 o superior necesita instrucciones **AVX** del procesador. En Windows, ejecutar en PowerShell como administrador `bcdedit /set hypervisorlaunchtype off`, reiniciar y volver a probar. Otra opción es usar MongoDB Atlas (clúster gratuito M0) con `mongosh "mongodb+srv://<cluster>.mongodb.net/calidad_aire_aburra" --username <usuario> scripts/01_crear_bd_e_insertar.js`.
+- **`Could not get lock /var/lib/dpkg/lock-frontend`**: Ubuntu está instalando actualizaciones automáticas. Repetir el paso 1 y esperar.
+- **El contenedor aparece como `Exited` en `sudo docker ps -a`**: revisar `sudo docker logs mongodb`. Si dice `Illegal instruction` o menciona **AVX**, el procesador virtual no expone esas instrucciones (MongoDB 5.0+ las necesita). Opciones:
+  1. En Windows, PowerShell como administrador: `bcdedit /set hypervisorlaunchtype off`, reiniciar y volver a probar.
+  2. Usar MongoDB 4.4, que no requiere AVX (usa el shell `mongo` en lugar de `mongosh`):
+     ```bash
+     sudo docker rm -f mongodb
+     sudo docker run -d --name mongodb -p 27017:27017 -v ~/UNAD_BigData_Tarea4_Jesus_Acevedo:/tarea4 mongo:4.4
+     sudo docker exec mongodb mongo --quiet /tarea4/scripts/01_crear_bd_e_insertar.js
+     ```

@@ -85,17 +85,19 @@ sensores (1) ──< lecturas (N)
 
 ## Cómo ejecutarlo
 
-Requisitos: MongoDB 6.0 o superior (probado para 8.0) y `mongosh`.
+Requisitos: MongoDB 6.0 o superior (probado para 8.0) y `mongosh`. En la VM (Ubuntu 26.04) se ejecuta con Docker:
 
 ```bash
 git clone https://github.com/JesusAMPY/UNAD_BigData_Tarea4_Jesus_Acevedo.git
-cd UNAD_BigData_Tarea4_Jesus_Acevedo
+sudo docker run -d --name mongodb -p 27017:27017 -v ~/UNAD_BigData_Tarea4_Jesus_Acevedo:/tarea4 mongo:8.0
 
-mongosh --quiet scripts/01_crear_bd_e_insertar.js
-mongosh --quiet scripts/02_consultas_crud.js
-mongosh --quiet scripts/03_filtros_operadores_join.js
-mongosh --quiet scripts/04_agregaciones.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/01_crear_bd_e_insertar.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/02_consultas_crud.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/03_filtros_operadores_join.js
+sudo docker exec mongodb mongosh --quiet /tarea4/scripts/04_agregaciones.js
 ```
+
+Con MongoDB instalado localmente basta con `mongosh --quiet scripts/01_crear_bd_e_insertar.js` (y así con los demás).
 
 Los scripts se ejecutan en ese orden. El script 01 borra y vuelve a crear la base de datos, así que se puede volver a empezar desde cero cuando se quiera.
 
