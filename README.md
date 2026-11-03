@@ -85,7 +85,7 @@ sensores (1) ──< lecturas (N)
 
 ## Cómo ejecutarlo
 
-Requisitos: MongoDB 6.0 o superior y `mongosh`.
+Requisitos: MongoDB 6.0 o superior (probado para 8.0) y `mongosh`.
 
 ```bash
 git clone https://github.com/JesusAMPY/UNAD_BigData_Tarea4_Jesus_Acevedo.git

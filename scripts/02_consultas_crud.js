@@ -6,6 +6,12 @@
 
 db = db.getSiblingDB("calidad_aire_aburra");
 
+// Este script modifica los datos: debe ejecutarse una sola vez después del script 01
+if (db.sensores.countDocuments({ codigo: "SEN-011" }) > 0) {
+  print("El script 02 ya se ejecutó. Vuelva a correr primero: mongosh --quiet scripts/01_crear_bd_e_insertar.js");
+  quit(1);
+}
+
 // ---------------------------- INSERCIÓN ------------------------------
 print("=== 1. INSERCIÓN: insertOne() de un nuevo sensor ===");
 const nuevo = db.sensores.insertOne({
