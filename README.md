@@ -85,16 +85,16 @@ sensores (1) ──< lecturas (N)
 
 ## Cómo ejecutarlo
 
-Requisitos: MongoDB 6.0 o superior (probado para 8.0) y `mongosh`. En la VM (Ubuntu 26.04) se ejecuta con Docker:
+Compatibles con MongoDB 4.4 o superior (shell `mongo` o `mongosh`). En la VM (Ubuntu 26.04 en VirtualBox, sin AVX) se ejecutó con Docker y MongoDB 4.4:
 
 ```bash
 git clone https://github.com/JesusAMPY/UNAD_BigData_Tarea4_Jesus_Acevedo.git
-sudo docker run -d --name mongodb -p 27017:27017 -v ~/UNAD_BigData_Tarea4_Jesus_Acevedo:/tarea4 mongo:8.0
+sudo docker run -d --name mongodb -p 27017:27017 -v ~/UNAD_BigData_Tarea4_Jesus_Acevedo:/tarea4 mongo:4.4
 
-sudo docker exec mongodb mongosh --quiet /tarea4/scripts/01_crear_bd_e_insertar.js
-sudo docker exec mongodb mongosh --quiet /tarea4/scripts/02_consultas_crud.js
-sudo docker exec mongodb mongosh --quiet /tarea4/scripts/03_filtros_operadores_join.js
-sudo docker exec mongodb mongosh --quiet /tarea4/scripts/04_agregaciones.js
+sudo docker exec mongodb mongo --quiet /tarea4/scripts/01_crear_bd_e_insertar.js
+sudo docker exec mongodb mongo --quiet /tarea4/scripts/02_consultas_crud.js
+sudo docker exec mongodb mongo --quiet /tarea4/scripts/03_filtros_operadores_join.js
+sudo docker exec mongodb mongo --quiet /tarea4/scripts/04_agregaciones.js
 ```
 
 Con MongoDB instalado localmente basta con `mongosh --quiet scripts/01_crear_bd_e_insertar.js` (y así con los demás).

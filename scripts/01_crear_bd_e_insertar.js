@@ -130,7 +130,7 @@ db.alertas.createIndex({ sensor_codigo: 1 });
 db.sensores.createIndex({ codigo: 1 }, { unique: true });
 
 print("\n=== 5. RESUMEN DE LA BASE DE DATOS ===");
-print("sensores : " + db.sensores.countDocuments());
-print("lecturas : " + db.lecturas.countDocuments());
-print("alertas  : " + db.alertas.countDocuments());
-print("TOTAL    : " + (db.sensores.countDocuments() + db.lecturas.countDocuments() + db.alertas.countDocuments()) + " documentos");
+print("sensores : " + db.sensores.countDocuments({}));
+print("lecturas : " + db.lecturas.countDocuments({}));
+print("alertas  : " + db.alertas.countDocuments({}));
+print("TOTAL    : " + (db.sensores.countDocuments({}) + db.lecturas.countDocuments({}) + db.alertas.countDocuments({})) + " documentos");

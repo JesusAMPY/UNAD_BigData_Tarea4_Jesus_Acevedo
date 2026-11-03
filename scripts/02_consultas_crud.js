@@ -76,6 +76,6 @@ print("\n=== 10. ELIMINACIÓN: deleteOne() – lectura de prueba del SEN-011 ===
 printjson(db.lecturas.deleteOne({ sensor_codigo: "SEN-011", "mediciones.pm25": 28.4 }));
 
 print("\n=== 11. ESTADO FINAL DE LAS COLECCIONES ===");
-print("sensores : " + db.sensores.countDocuments());
-print("lecturas : " + db.lecturas.countDocuments());
-print("alertas  : " + db.alertas.countDocuments());
+print("sensores : " + db.sensores.countDocuments({}));
+print("lecturas : " + db.lecturas.countDocuments({}));
+print("alertas  : " + db.alertas.countDocuments({}));
