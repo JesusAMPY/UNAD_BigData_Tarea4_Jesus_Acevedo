@@ -72,6 +72,8 @@ sensores (1) ──< lecturas (N)
 
 **Total: 215 documentos** de prueba (generados con semilla fija, así que siempre son los mismos).
 
+![Diagrama del esquema](docs/diagrama_esquema.png)
+
 ## Scripts
 
 | Script | Contenido |
