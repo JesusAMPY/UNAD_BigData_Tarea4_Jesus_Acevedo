@@ -102,3 +102,7 @@ Con MongoDB instalado localmente basta con `mongosh --quiet scripts/01_crear_bd_
 Los scripts se ejecutan en ese orden. El script 01 borra y vuelve a crear la base de datos, así que se puede volver a empezar desde cero cuando se quiera.
 
 La guía de instalación de MongoDB en Ubuntu está en [docs/instalacion_mongodb_ubuntu.md](docs/instalacion_mongodb_ubuntu.md).
+
+## Evidencias de ejecución
+
+Los pantallazos de la ejecución en la VM (Ubuntu 26.04, Docker, MongoDB 4.4) están en [docs/evidencias](docs/evidencias).
